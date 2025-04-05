@@ -1,0 +1,420 @@
+api调用指南
+
+Get(/flights/{flightId})
+请求样例：
+localhost:8080/flights/mu544?startDate=2024-08-11 （这里的startDate应该有一个可选范围：例如今天是12号，那么只有9、10、11、12、13号可选，太早或太晚会报错）
+返回值样例：
+{
+  "ident_iata": "MU544",
+  "origin": {
+    "code_iata": "SIN",
+    "timezone": "Asia/Singapore",
+    "name": "Singapore Changi",
+    "city": "Singapore"
+  },
+  "destination": {
+    "code_iata": "PVG",
+    "timezone": "Asia/Shanghai",
+    "name": "Shanghai Pudong Int'l",
+    "city": "Shanghai"
+  },
+  "status": "Arrived / Gate Arrival",
+  "blocked": false,
+  "diverted": false,
+  "cancelled": false,
+  "scheduled_out_date": "2024-08-12",
+  "scheduled_out_time": "00:55",
+  "estimated_out_date": "2024-08-12",
+  "estimated_out_time": "00:55",
+  "actual_out_date": "2024-08-12",
+  "actual_out_time": "00:47",
+  "scheduled_in_date": "2024-08-12",
+  "scheduled_in_time": "06:20",
+  "estimated_in_date": "2024-08-12",
+  "estimated_in_time": "06:08",
+  "actual_in_date": "2024-08-12",
+  "actual_in_time": "06:12",
+  "terminal_origin": "3",
+  "gate_origin": "A20",
+  "terminal_destination": "1",
+  "baggage_claim": "15",
+  "aircraft_type": "A332"
+}
+
+--------------------------------------------------
+
+Get(/flight-ticket/oneway)
+请求样例：
+http://localhost:8080/flight-ticket/oneway?origin=NRT&destination=SIN&departureDate=2024-08-14&travelClass=ECONOMY&maxPrice=2000 （这里的departureDate不能是过去以及半年之后）
+返回值样例：（List）
+[
+  {
+    "itineraries": [
+      {
+        "departure": {
+          "iataCode": "NRT",
+          "cityCode": "TYO",
+          "countryCode": "JP",
+          "terminal": "1",
+          "date": "2024-08-14",
+          "time": "08:15:00"
+        },
+        "arrival": {
+          "iataCode": "SIN",
+          "cityCode": "SIN",
+          "countryCode": "SG",
+          "terminal": "1",
+          "date": "2024-08-14",
+          "time": "13:50:00"
+        },
+        "iataCodeFlight": "TR809",
+        "carrierCode": "TR",
+        "flightNumber": "809",
+        "carrierName": "SCOOT",
+        "aircraftName": "BOEING 787-9"
+      }
+    ],
+    "airlineCode": [
+      "HR"
+    ],
+    "grandTotalPrice": "268.50",
+    "fareDetailsBySegment": [
+      {
+        "cabin": "ECONOMY",
+        "includedCheckedBagsQuantity": 0
+      }
+    ]
+  }
+]
+
+Get(/flight-ticket/return)
+请求样例：
+http://localhost:8080/flight-ticket/return?origin=NRT&destination=SIN&departureDate=2024-08-14&returnDate=2024-08-22&travelClass=ECONOMY&maxPrice=600 
+（这里的departureDate和returnDate都不能是过去以及半年之后）
+返回值样例：（List）
+[
+  {
+    "itineraries": [
+      {
+        "departure": {
+          "iataCode": "NRT",
+          "cityCode": "TYO",
+          "countryCode": "JP",
+          "terminal": "1",
+          "date": "2024-08-14",
+          "time": "08:15:00"
+        },
+        "arrival": {
+          "iataCode": "SIN",
+          "cityCode": "SIN",
+          "countryCode": "SG",
+          "terminal": "1",
+          "date": "2024-08-14",
+          "time": "13:50:00"
+        },
+        "iataCodeFlight": "TR809",
+        "carrierCode": "TR",
+        "flightNumber": "809",
+        "carrierName": "SCOOT",
+        "aircraftName": "BOEING 787-9"
+      },
+      {
+        "departure": {
+          "iataCode": "SIN",
+          "cityCode": "SIN",
+          "countryCode": "SG",
+          "terminal": "1",
+          "date": "2024-08-22",
+          "time": "22:15:00"
+        },
+        "arrival": {
+          "iataCode": "NRT",
+          "cityCode": "TYO",
+          "countryCode": "JP",
+          "terminal": "1",
+          "date": "2024-08-23",
+          "time": "06:15:00"
+        },
+        "iataCodeFlight": "TR808",
+        "carrierCode": "TR",
+        "flightNumber": "808",
+        "carrierName": "SCOOT",
+        "aircraftName": "BOEING 787-9"
+      }
+    ],
+    "airlineCode": [
+      "SQ"
+    ],
+    "grandTotalPrice": "536.80",
+    "fareDetailsBySegment": [
+      {
+        "cabin": "ECONOMY",
+        "includedCheckedBagsQuantity": 0
+      },
+      {
+        "cabin": "ECONOMY",
+        "includedCheckedBagsQuantity": 0
+      }
+    ]
+  }
+]
+
+--------------------------------------------------
+
+Post(/favourites/addFlight)
+该方法添加 flight tracker 到收藏夹
+@RequestBody: （以下为样例，该json与 flight tracker api的返回值是一致的）
+{
+  "ident_iata": "MU544",
+  "origin": {
+    "code_iata": "SIN",
+    "timezone": "Asia/Singapore",
+    "name": "Singapore Changi",
+    "city": "Singapore"
+  },
+  "destination": {
+    "code_iata": "PVG",
+    "timezone": "Asia/Shanghai",
+    "name": "Shanghai Pudong Int'l",
+    "city": "Shanghai"
+  },
+  "status": "Arrived / Gate Arrival",
+  "blocked": false,
+  "diverted": false,
+  "cancelled": false,
+  "scheduled_out_date": "2024-08-07",
+  "scheduled_out_time": "00:55",
+  "estimated_out_date": "2024-08-07",
+  "estimated_out_time": "00:55",
+  "actual_out_date": "2024-08-07",
+  "actual_out_time": "00:49",
+  "scheduled_in_date": "2024-08-07",
+  "scheduled_in_time": "06:20",
+  "estimated_in_date": "2024-08-07",
+  "estimated_in_time": "05:51",
+  "actual_in_date": "2024-08-07",
+  "actual_in_time": "05:58",
+  "terminal_origin": "3",
+  "gate_origin": "B3",
+  "terminal_destination": "1",
+  "baggage_claim": "14",
+  "aircraft_type": "A359"
+}
+返回200
+
+Get(/favourites/viewFlight)
+该方法返回当前用户所有收藏的 flight tracker
+返回200
+返回值样例：（该值为List）
+[
+  {
+    "id": 8,
+    "ident_iata": "MU544",
+    "origin": {
+      "code_iata": "SIN",
+      "timezone": "Asia/Singapore",
+      "name": "Singapore Changi",
+      "city": "Singapore"
+    },
+    "destination": {
+      "code_iata": "PVG",
+      "timezone": "Asia/Shanghai",
+      "name": "Shanghai Pudong Int'l",
+      "city": "Shanghai"
+    },
+    "status": "Arrived / Gate Arrival",
+    "blocked": false,
+    "diverted": false,
+    "cancelled": false,
+    "scheduled_out_date": "2024-08-07",
+    "scheduled_out_time": "00:55",
+    "estimated_out_date": "2024-08-07",
+    "estimated_out_time": "00:55",
+    "actual_out_date": "2024-08-07",
+    "actual_out_time": "00:49",
+    "scheduled_in_date": "2024-08-07",
+    "scheduled_in_time": "06:20",
+    "estimated_in_date": "2024-08-07",
+    "estimated_in_time": "05:51",
+    "actual_in_date": "2024-08-07",
+    "actual_in_time": "05:58",
+    "terminal_origin": "3",
+    "gate_origin": "B3",
+    "terminal_destination": "1",
+    "baggage_claim": "14",
+    "aircraft_type": "A359"
+  }
+]
+
+Delete(/favourites/deleteFlight/{id})
+该方法删除收藏夹中指定 id 的 flight tracker
+返回204
+
+--------------------------------------------------
+
+Post(/favourite/addTicketOneway)
+该方法将单程票加入收藏夹
+@RequestBody:（该json与 ticket oneway api 的返回值不一致，需要在前端进行简单的数据处理）
+{
+  "iataCodeFlight":"HO1602",
+  "airlineCodes":["HO"],
+  "carrierCode":"HO",
+  "flightNumber":"1602",
+  "departureIataCode":"SIN",
+  "arrivalIataCode":"PVG",
+  "departureDate":"2024-08-14",
+  "departureTime":"16:00:00",
+  "arrivalDate":"2024-08-14",
+  "arrivalTime":"21:40:00",
+  "cabin":"ECONOMY"
+}
+返回200
+
+Get(/favourite/viewTicketOneway)
+该方法返回当前用户收藏的所有单程票
+返回200
+返回值样例：（List）
+[
+  {
+    "id": 5,
+    "iataCodeFlight": "HO1602",
+    "airlineCodes": [
+      "HO"
+    ],
+    "carrierCode": "HO",
+    "flightNumber": "1602",
+    "departureIataCode": "SIN",
+    "arrivalIataCode": "PVG",
+    "departureDate": "2024-08-14",
+    "departureTime": "16:00:00",
+    "arrivalDate": "2024-08-14",
+    "arrivalTime": "21:40:00",
+    "cabin": "ECONOMY"
+  }
+]
+
+Delete(/favourite/deleteTicketOneway/{id})
+该方法删除收藏夹中指定 id 的单程票
+返回204
+
+--------------------------------------------------
+
+Post(/favourite/addTicketReturn)
+该方法将往返票加入收藏夹
+@RequestBody:（该json与 ticket oneway api 的返回值不一致，需要在前端进行简单的数据处理）
+！！！请注意，所有“-”都是下划线，由于记事本无法显示下划线，我只能用“-”！！！
+{
+    "airlineCodes": [
+      "HO"
+    ],
+    "carrierCode": "HO",
+    "cabin": "ECONOMY"
+    "locationIataCode-1": "SIN",
+    "locationIataCode-2": "PVG",
+    "iataCodeFlight-1": "HO1602",
+    "flightNumber-1":"1602",
+    "departureDate-1":"2024-08-14",
+    "departureTime-1":"16:00:00",
+    "arrivalDate-1":"2024-08-14",
+    "arrivalTime-1":"21:40:00",
+    "iataCodeFlight-2": "HO1603",
+    "flightNumber-2":"1603",
+    "departureDate-2":"2024-08-16",
+    "departureTime-2":"16:00:00",
+    "arrivalDate-2":"2024-08-16",
+    "arrivalTime-2":"21:40:00"
+}
+！！！请注意，所有“-”都是下划线，由于记事本无法显示下划线，我只能用“-”！！！
+返回200
+
+Get(/favourite/viewTicketReturn)
+该方法返回当前用户收藏的所有往返票
+返回200
+返回值样例：（List）
+！！！请注意，所有key中的“-”都是下划线，由于记事本无法显示下划线，我只能用“-”！！！
+[
+  {
+    "id": 5,
+    "airlineCodes": [
+      "HO"
+    ],
+    "carrierCode": "HO",
+    "cabin": "ECONOMY"
+    "locationIataCode-1": "SIN",
+    "locationIataCode-2": "PVG",
+    "iataCodeFlight-1": "HO1602",
+    "flightNumber-1":"1602",
+    "departureDate-1":"2024-08-14",
+    "departureTime-1":"16:00:00",
+    "arrivalDate-1":"2024-08-14",
+    "arrivalTime-1":"21:40:00",
+    "iataCodeFlight-2": "HO1603",
+    "flightNumber-2":"1603",
+    "departureDate-2":"2024-08-16",
+    "departureTime-2":"16:00:00",
+    "arrivalDate-2":"2024-08-16",
+    "arrivalTime-2":"21:40:00"
+  }
+]
+！！！请注意，所有key中的“-”都是下划线，由于记事本无法显示下划线，我只能用“-”！！！
+
+Delete(/favourite/deleteTicketReturn/{id})
+该方法删除收藏夹中指定 id 的往返票
+返回204
+
+--------------------------------------------------
+
+Get(/flight-ticket/onewayAccurate)
+该方法准确搜索单个单程票
+！！！请注意，所有参数名字中的“-”都是下划线，由于记事本无法显示下划线，我只能用“-”！！！
+使用示例：http://localhost:8080/flight-ticket/onewayAccurate?origin=SIN&destination=PVG&departureDate=2024-08-14&travelClass=ECONOMY&iataCodeFlight-1=CA826
+没有则返回空
+
+Get(/flight-ticket/returnAccurate)
+该方法准确搜索单个往返票
+！！！请注意，所有参数名字中的“-”都是下划线，由于记事本无法显示下划线，我只能用“-”！！！
+使用示例：http://localhost:8080/flight-ticket/returnAccurate?origin=SIN&destination=PVG&departureDate=2024-08-14&returnDate=2024-08-22&travelClass=ECONOMY&iataCodeFlight-1=CA826&iataCodeFlight-2=CA825
+没有则返回空
+
+--------------------------------------------------
+
+Post(/notifications/add)
+该方法将为当前用户添加一个提醒
+@RequestBody：
+{
+  "notificationDateTime":"2024-08-08T23:55:00",
+  "type":"departure",
+  "iataCodeFlight":"HO1602",
+  "originIataCode":"SIN",
+  "destinationIataCode":"PVG",
+  "departureDate":"2024-08-09",
+  "departureTime":"01:55:00",
+  "arrivalDate":"2024-08-09",
+  "arrivalTime":"05:45:00"
+}
+notificationDateTime是标准的电脑用时间，type支持"departure"和"arrival"两种输入
+返回201
+
+Get(/notifications/view)
+该方法返回当前用户的所有提醒
+返回200
+返回值样例：（list）
+[
+  {
+    "id": 2,
+    "notificationDateTime": "2024-08-12T23:55:00",
+    "type": "departure",
+    "iataCodeFlight": "HO1602",
+    "originIataCode": "SIN",
+    "destinationIataCode": "PVG",
+    "departureDate": "2024-08-09",
+    "departureTime": "01:55:00",
+    "arrivalDate": "2024-08-09",
+    "arrivalTime": "05:45:00",
+    "sent": false
+  }
+]
+
+Delete(/notifications/delete/{id})
+该方法删除提醒列表中指定 id 的提醒
+返回204
